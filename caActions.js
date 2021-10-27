@@ -138,23 +138,26 @@ async function getAdmin(req, res){
 
   // in a real application this would be done on an administrative flow, and only once
   await enrollAdmin(caClient, wallet, 'Org1MSP');
+  res.send(`Admin and wallet created`)
 }
 
 /**
  * Register and enroll an application user for Org1
  * @param {*} org1UserId 
  */
-async function getUser(org1UserId){
-  let ccp = helper.buildCCPOrg1()
+async function getUser(req, res){	
+	const org1UserId = roland
+  	let ccp = helper.buildCCPOrg1()
 
-  // build an instance of the fabric ca services client based on
-  // the information in the network configuration
-  const caClient = buildCAClient(FabricCAServices, ccp, 'ca.org1.example.com');
-      
-  // setup the wallet to hold the credentials of the application user
-  const wallet = await helper.buildWallet(Wallets, walletPath);  
+  	// build an instance of the fabric ca services client based on
+	  // the information in the network configuration
+  	const caClient = buildCAClient(FabricCAServices, ccp, 'ca.org1.example.com');
+	
+  	// setup the wallet to hold the credentials of the application user
+  	const wallet = await helper.buildWallet(Wallets, walletPath);  
 
 	await registerAndEnrollUser(caClient, wallet, 'Org1MSP', org1UserId, 'org1.department1');
+	res.send(`Org1User with id = ${org1UserId} registered on the wallet`)
 }
 
 module.exports.getAdmin = getAdmin

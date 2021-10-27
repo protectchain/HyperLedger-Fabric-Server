@@ -49,9 +49,9 @@ async function ledger(req, res)
     let args = req.params['id']
     if(args === 1){       //original is: if(args[2] === 'GetAllAssets')
       let result = await contract.evaluateTransaction('GetAllAssets');
-      const result = helper.prettyJSONString(result.toString())
-      console.log(result);
-      res.send(result)
+      const result2 = helper.prettyJSONString(result.toString())
+      console.log(result2);
+      res.send(result2)
     } 
     else if(args === 2){    //original is :else if(args[2] === 'ReadAsset')
       // let asset = args[3]
