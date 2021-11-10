@@ -146,7 +146,7 @@ async function getAdmin(req, res){
  * @param {*} org1UserId 
  */
 async function getUser(req, res){	
-	const org1UserId = roland
+	const org1UserId = 'roland'
   	let ccp = helper.buildCCPOrg1()
 
   	// build an instance of the fabric ca services client based on

@@ -10,7 +10,7 @@ const path = require('path')
 const { Gateway, Wallets } = require('fabric-network');
 const walletPath = path.join(__dirname, 'wallet');
 
-// some vars
+// some consts
 const org1UserId = 'roland';
 const channelName = 'mychannel';
 const chaincodeName = 'basic';
@@ -47,27 +47,30 @@ async function ledger(req, res)
 
     // let args = process.argv  
     let args = req.params['id']
-    if(args === 1){       //original is: if(args[2] === 'GetAllAssets')
+    console.log('args = '+args)
+    if(args == 1){       //original is: if(args[2] === 'GetAllAssets')
       let result = await contract.evaluateTransaction('GetAllAssets');
       const result2 = helper.prettyJSONString(result.toString())
-      console.log(result2);
+      console.log('Done'+result2);
       res.send(result2)
     } 
-    else if(args === 2){    //original is :else if(args[2] === 'ReadAsset')
+    else if(args == 2){    //original is :else if(args[2] === 'ReadAsset')
       // let asset = args[3]
       // result = await contract.evaluateTransaction('ReadAsset', asset);
       // console.log(`${helper.prettyJSONString(result.toString())}`);
-      let asset = 'asset1'    //asset1 is the test case
+      let asset = 'asset14'    //asset1 is the test case
       result = await contract.evaluateTransaction('ReadAsset', asset);
       console.log(`${helper.prettyJSONString(result.toString())}`);
       res.send(helper.prettyJSONString(result.toString()))
     }
-    else if(args === 3){   //original is: else if(args[2] === 'CreateAsset')
-      let r = await contract.submitTransaction('CreateAsset', 'asset14', 'yellow', '5', 'Snorre3', '1300');
-      console.log('*** Result: committed', r.toString());
+    else if(args == 3){   //original is: else if(args[2] === 'CreateAsset')
+      let r = await contract.submitTransaction('CreateAsset', 'asset1', 'red', '5', 'Honda', '1000');
+      const result = r.toString();
+      console.log('*** Result: committed', result);
+      res.send(result)
     }
     else {
-      console.log('...')
+      console.log('...Else case')
     }
     // disconnect form the network
     gateway.disconnect();
