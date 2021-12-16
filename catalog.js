@@ -11,7 +11,8 @@ router.get('/', (req, res) => {
 
 router.get('/caActions/getAdmin', caActions.getAdmin)
 router.get('/caActions/getUser', caActions.getUser)
-router.get('/ledgerActions/:id', ledgerActions.ledger)
-
+router.get('/ledgerActions/getAllAssets', ledgerActions.getAllAssets)
+router.get('/ledgerActions/readAsset', ledgerActions.readAsset)
+router.get('/ledgerActions/createAsset', ledgerActions.createAsset)
 
 module.exports = router;

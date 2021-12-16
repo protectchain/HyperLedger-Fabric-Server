@@ -15,7 +15,7 @@ const org1UserId = 'roland';
 const channelName = 'mychannel';
 const chaincodeName = 'basic';
 
-async function ledger(req, res)
+async function getAllAssets(req, res)
 {
   try {
     // build CCP
@@ -45,39 +45,81 @@ async function ledger(req, res)
     // Get the contract from the network.
     const contract = network.getContract(chaincodeName);
 
-    // let args = process.argv  
-    let args = req.params['id']
-    console.log('args = '+args)
-    if(args == 1){       //original is: if(args[2] === 'GetAllAssets')
-      let result = await contract.evaluateTransaction('GetAllAssets');
-      const result2 = helper.prettyJSONString(result.toString())
-      console.log('Done'+result2);
-      res.send(result2)
-    } 
-    else if(args == 2){    //original is :else if(args[2] === 'ReadAsset')
-      // let asset = args[3]
-      // result = await contract.evaluateTransaction('ReadAsset', asset);
-      // console.log(`${helper.prettyJSONString(result.toString())}`);
-      let asset = 'asset14'    //asset1 is the test case
-      result = await contract.evaluateTransaction('ReadAsset', asset);
-      console.log(`${helper.prettyJSONString(result.toString())}`);
-      res.send(helper.prettyJSONString(result.toString()))
-    }
-    else if(args == 3){   //original is: else if(args[2] === 'CreateAsset')
-      let r = await contract.submitTransaction('CreateAsset', 'asset1', 'red', '5', 'Honda', '1000');
-      const result = r.toString();
-      console.log('*** Result: committed', result);
-      res.send(result)
-    }
-    else {
-      console.log('...Else case')
-    }
+    let result = await contract.evaluateTransaction('GetAllAssets');
+    const result2 = helper.prettyJSONString(result.toString());
+    console.log('Done'+result2);
+    res.send(result2);
+
     // disconnect form the network
     gateway.disconnect();
   }
   catch(e){
-    throw new Error(e)
+    throw new Error(e);
   }   
 }
 
-module.exports.ledger = ledger
+async function readAsset(req, res)
+{
+  try {
+    const ccp = helper.buildCCPOrg1();
+    
+    const wallet = await helper.buildWallet(Wallets, walletPath);
+
+    const gateway = new Gateway();
+      
+    await gateway.connect(ccp, {
+      wallet,
+      identity: org1UserId,
+      discovery: { enabled: true, asLocalhost: true } // using asLocalhost as this gateway is using a fabric network deployed locally
+    });
+
+    const network = await gateway.getNetwork(channelName);
+
+    const contract = network.getContract(chaincodeName);
+
+    let asset = 'asset14';    //asset1 is the test case
+    result = await contract.evaluateTransaction('ReadAsset', asset);
+    console.log(`${helper.prettyJSONString(result.toString())}`);
+    res.send(helper.prettyJSONString(result.toString()));
+  
+    gateway.disconnect();
+  }
+  catch(e){
+    throw new Error(e);
+  }   
+}
+
+async function createAsset(req, res)
+{
+  try {
+    const ccp = helper.buildCCPOrg1();
+    
+    const wallet = await helper.buildWallet(Wallets, walletPath);
+
+    const gateway = new Gateway();
+      
+    await gateway.connect(ccp, {
+      wallet,
+      identity: org1UserId,
+      discovery: { enabled: true, asLocalhost: true } // using asLocalhost as this gateway is using a fabric network deployed locally
+    });
+
+    const network = await gateway.getNetwork(channelName);
+
+    const contract = network.getContract(chaincodeName);
+
+    let r = await contract.submitTransaction('CreateAsset', 'asset1', 'red', '5', 'Honda', '1000');
+    const result = r.toString();
+    console.log('*** Result: committed', result);
+    res.send(result);
+
+    gateway.disconnect();
+  }
+  catch(e){
+    throw new Error(e);
+  }   
+}
+
+module.exports.getAllAssets = getAllAssets;
+module.exports.readAsset = readAsset;
+module.exports.createAsset = createAsset;
