@@ -4,6 +4,7 @@
 
 // node.js includes
 const helper = require('./helper')
+const assetParamaters = require('./assetParamaters')
 const path = require('path')
 
 // fabric includes
@@ -14,6 +15,12 @@ const walletPath = path.join(__dirname, 'wallet');
 const org1UserId = 'roland';
 const channelName = 'mychannel';
 const chaincodeName = 'basic';
+
+//imported values
+const color = assetParamaters.color;
+const size = assetParamaters.size;
+const owner = assetParamaters.owner;
+const appraisedValue = assetParamaters.appraisedValue;
 
 async function getAllAssets(req, res)
 {
@@ -77,12 +84,23 @@ async function readAsset(req, res)
 
     const contract = network.getContract(chaincodeName);
 
-    let asset = 'asset14';    //asset1 is the test case
-    result = await contract.evaluateTransaction('ReadAsset', asset);
-    console.log(`${helper.prettyJSONString(result.toString())}`);
-    res.send(helper.prettyJSONString(result.toString()));
+    var asset = 'asset1';    //asset1 is the test case
+    try{
+      asset = req.body.id;
+      console.log(`asset is ${asset}`);
+    }catch(err){
+      console.log(`Error is : ${err}`);
+    }finally{
+      try{
+        result = await contract.evaluateTransaction('ReadAsset', asset);
+        console.log(`${helper.prettyJSONString(result.toString())}`);
+        res.send(helper.prettyJSONString(result.toString()));
+      }catch(err){
+        res.send('The given asset does not exist');
+      }
   
-    gateway.disconnect();
+      gateway.disconnect();
+    }
   }
   catch(e){
     throw new Error(e);
@@ -108,12 +126,25 @@ async function createAsset(req, res)
 
     const contract = network.getContract(chaincodeName);
 
-    let r = await contract.submitTransaction('CreateAsset', 'asset1', 'red', '5', 'Honda', '1000');
-    const result = r.toString();
-    console.log('*** Result: committed', result);
-    res.send(result);
+    var asset = 'asset1';    //asset1 is the test case
+    try{
+      asset = req.body.id;
+      console.log(`asset is ${asset}`);
+    }catch(err){
+      console.log(`Error is : ${err}`);
+    }finally{
+      try{
+      let r = await contract.submitTransaction('CreateAsset', asset, color, size, owner, appraisedValue);
+      const result = r.toString();
+      console.log('*** Result: committed', result);
+      res.send(result);
+      }catch(err){
+        res.send('Invalid request is made');
+      }
+    
+      gateway.disconnect();
+    }
 
-    gateway.disconnect();
   }
   catch(e){
     throw new Error(e);

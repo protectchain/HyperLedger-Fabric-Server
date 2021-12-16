@@ -1,7 +1,7 @@
 const color = 'green'
 const size = '20f'
 const owner = 'cit lab'
-const appraisedValue = 'yes'
+const appraisedValue = 'approved'
 
 module.exports.color = color
 module.exports.size = size
